@@ -95,8 +95,7 @@ class GenerateMacCommand extends Command
                 $io->comment(implode(PHP_EOL, $macAddresses));
                 break;
             case 'json':
-                $result = $count > 1 ? $macAddresses : [$macAddresses];
-                $io->writeln(\json_encode($result, JSON_PRETTY_PRINT));
+                $io->writeln(\json_encode($macAddresses, JSON_PRETTY_PRINT));
                 break;
             case 'plain':
                 $io->writeln($macAddresses, SymfonyStyle::OUTPUT_PLAIN | SymfonyStyle::VERBOSITY_NORMAL);

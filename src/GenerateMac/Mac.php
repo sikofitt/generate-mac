@@ -55,10 +55,10 @@ class Mac
      * Reserved mac prefixes for private devices.
      */
     private const AVAILABLE_PREFIXES = [
-          'x2xxxx',
-          'x6xxxx',
-          'xaxxxx',
-          'xexxxx',
+        'x2xxxx',
+        'x6xxxx',
+        'xaxxxx',
+        'xexxxx',
     ];
 
     /**
@@ -80,7 +80,7 @@ class Mac
     /**
      * Mac constructor.
      *
-     * @param int $separator  The mac address separator, one of ':', '-', or ''
+     * @param int $separator  The mac address separator, one of self::SEPARATOR_*
      * @param bool $unique  Whether or not we care if we get a non unique prefix.
      */
     public function __construct(int $separator = self::SEPARATOR_COLON, bool $unique = true)
@@ -98,8 +98,11 @@ class Mac
         $template = $this->shuffle();
         $prefix = $this->generateString($template);
 
+        /**
+         * @internal
+         */
         if ($this->isTest) {
-            $prefix = '02bb01';
+            $prefix = '02bb01'; // QEMU virtual NIC
         }
 
         if ($this->getUnique()) {
@@ -159,8 +162,18 @@ class Mac
      */
     public function setSeparator(int $separator): Mac
     {
-        if (!\in_array($separator, [self::SEPARATOR_COLON, self::SEPARATOR_DASH, self::SEPARATOR_NONE], true)) {
-            throw new \InvalidArgumentException('Separator is invalid.  Acceptable values: ":", "-", or ""');
+        if (!\in_array(
+            $separator,
+            [
+              self::SEPARATOR_COLON,
+              self::SEPARATOR_DASH,
+              self::SEPARATOR_NONE,
+            ],
+            true
+        )) {
+            throw new \InvalidArgumentException(
+                'Separator is invalid.  Acceptable values: One of Mac::SEPARATOR_*'
+            );
         }
 
         $this->separator = $separator;

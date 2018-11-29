@@ -12,7 +12,7 @@ composer require sikofitt/generate-mac
 ```php
 use Sikofitt\GenerateMac\Mac;
 
-$mac = new Mac(); // default is ':'
+$mac = new Mac(); // default separator is ':'
 // or
 $mac->setSeparator(Mac::SEPARATOR_COLON);
 $address = $mac->getAddress(); // ab:cd:ef:01:23:45
@@ -65,10 +65,29 @@ var_dump($addresses);
 // return an array [0 => '32:73:c0:b3:62:27']
 ```
 
+#### Using the console component
+
+The console script requires [symfony/console](https://symfony.com/doc/current/components/console.html "Symfony Console Component")
+```bash
+user@localhost:~/generate-mac$ bin/generate-mac --count (int) --output (json|plain|string) --separator (none|colon|dash)
+```
+  * --count Generate {count} mac addresses
+  * --output Output in selected format
+    * string: (default) Outputs the mac address(es) with formatting
+    * plain:  Outputs the mac address(es) with no formatting
+    * json:   Output the mac address(es) in json format
+  * --separator Outputs with the selected operator
+    * colon: ':' (default)
+    * dash:  '-'
+    * none:  ''
+
+_See bin/generate-mac --help_
+
+
 #### Test
 
 ```bash
-user@localhost:~/generate-mac$ vendor/phpunit
+user@localhost:~/generate-mac$ vendor/bin/phpunit
 ```
 
 #### License
