@@ -40,12 +40,20 @@ class MacTest extends TestCase
         }
 
         $this->assertRegExp(self::REGEX, $mac->getMacAddress());
+        $this->assertSame(Mac::SEPARATOR_COLON, $mac->getSeparator());
+        $this->assertTrue($mac->getUnique());
     }
 
     public function testSeparator(): void
     {
-        $mac = new Mac('-');
+        $mac = new Mac(Mac::SEPARATOR_DASH);
+
+        $this->assertSame(Mac::SEPARATOR_DASH, $mac->getSeparator());
         $this->assertRegExp(self::REGEX, $mac->getMacAddress());
+        $mac->setSeparator(Mac::SEPARATOR_COLON);
+        $this->assertSame(Mac::SEPARATOR_COLON, $mac->getSeparator());
+        $this->assertRegExp(self::REGEX, $mac->getMacAddress());
+        $this->assertNotFalse(strpos($mac->getMacAddress(), ':'));
     }
 
     public function testUnique(): void
@@ -53,14 +61,17 @@ class MacTest extends TestCase
         $class = new class extends Mac {
             protected $isTest = true;
         };
+        $this->assertTrue($class->getUnique());
 
         $macAddress = $class->getMacAddress();
         $this->assertStringStartsNotWith(self::NON_UNIQ_PREFIX, $macAddress);
+        $class->setUnique(false);
+        $this->assertFalse($class->getUnique());
     }
 
     public function testThrowsOnInvalidPrefix(): void
     {
         $this->expectException(\InvalidArgumentException::class);
-        $mac = new Mac('_');
+        $mac = new Mac(4);
     }
 }

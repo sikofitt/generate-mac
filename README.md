@@ -13,12 +13,18 @@ composer require sikofitt/generate-mac
 use Sikofitt\GenerateMac\Mac;
 
 $mac = new Mac(); // default is ':'
+// or
+$mac->setSeparator(':');
 $address = $mac->getAddress(); // ab:cd:ef:01:23:45
 
 $mac = new Mac('-');
+// or
+$mac->setSeparator('-');
 $address = $mac->getAddress(); // ab-cd-ef-01-23-45
 
 $mac = new Mac('');
+// or
+$mac->setSeparator('');
 $address = $mac->getAddress(); // abcdef012345
 ```
 
@@ -26,6 +32,9 @@ If you don't care that it is unique you can remove the check for private mac pre
 
 ```php
 $mac = new Mac(':', false);
+// or
+$mac->setUnique(false);
+
 $address = $mac->getAddress();
 
 // '52:54:00:ab:cd:ef',  QEMU virtual NIC prefix 52:54:00
@@ -51,6 +60,9 @@ var_dump($addresses);
  *       9 => '32:73:c0:b3:62:27',
  *   );
  */
+
+// if you call this with 1 as the count it will still
+// return an array [0 => '32:73:c0:b3:62:27']
 ```
 
 #### Test

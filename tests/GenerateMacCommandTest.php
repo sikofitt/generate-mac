@@ -83,10 +83,10 @@ class GenerateMacCommandTest extends TestCase
         $this->commandTester->execute(['--separator' => 'none', '--output' => 'plain']);
 
         $output = $this->commandTester->getDisplay(true);
-        // 13 because it adds a new line
-        $this->assertSame(13, strlen($output));
+        // 13 because it adds a new line with SymfonyStyle::writeLn();
+        $this->assertSame(13, \strlen($output));
         // just to make sure trim it.
-        $this->assertSame(12, strlen(trim($output)));
+        $this->assertSame(12, \strlen(trim($output)));
 
         $this->commandTester->execute(['--separator' => 'dash', '--output' => 'plain']);
         $output = $this->commandTester->getDisplay();
