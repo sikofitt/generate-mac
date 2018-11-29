@@ -1,6 +1,14 @@
-## Small library to generate unique private mac addresses
+# sikofitt/generate-mac
 
-### Usage
+### Small library to generate unique private mac addresses
+
+#### Install
+[composer](https://getcomposer.org)
+```bash
+composer require sikofitt/generate-mac
+```
+
+#### Usage
 ```php
 use Sikofitt\GenerateMac\Mac;
 
@@ -17,11 +25,11 @@ $address = $mac->getAddress(); // abcdef012345
 If you don't care that it is unique you can remove the check for private mac prefixes.
 
 ```php
-    $mac = new Mac(':', false);
-    $address = $mac->getAddress();
+$mac = new Mac(':', false);
+$address = $mac->getAddress();
 
-    // '52:54:00:ab:cd:ef',  QEMU virtual NIC prefix 52:54:00
-    // It's really not likely there will be a collision though.
+// '52:54:00:ab:cd:ef',  QEMU virtual NIC prefix 52:54:00
+// It's really not likely there will be a collision though.
 ```
 
 Generate multiple mac addresses
@@ -44,3 +52,13 @@ var_dump($addresses);
  *   );
  */
 ```
+
+#### Test
+
+```bash
+user@localhost:~/generate-mac$ vendor/phpunit
+```
+
+#### License
+
+[GPL-3.0](LICENSE)
