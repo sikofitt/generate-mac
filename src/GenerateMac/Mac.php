@@ -21,6 +21,9 @@ namespace Sikofitt\GenerateMac;
 
 class Mac
 {
+    public const SEPARATOR_COLON = 0;
+    public const SEPARATOR_DASH = 1;
+    public const SEPARATOR_NONE = 2;
     /**
      * Private mac address prefixes that are used
      * internally or with virtual machines and containers.
@@ -57,10 +60,6 @@ class Mac
           'xaxxxx',
           'xexxxx',
     ];
-
-    public const SEPARATOR_COLON = 0;
-    public const SEPARATOR_DASH = 1;
-    public const SEPARATOR_NONE = 2;
 
     /**
      * @internal
@@ -178,6 +177,24 @@ class Mac
     }
 
     /**
+     * Helper to get the separator in string format
+     *
+     * @return string
+     */
+    public function getSeparatorAsString(): string
+    {
+        switch ($this->getSeparator()) {
+            default:
+            case self::SEPARATOR_COLON:
+                return ':';
+            case self::SEPARATOR_DASH:
+                return '-';
+            case self::SEPARATOR_NONE:
+                return '';
+        }
+    }
+
+    /**
      * Test to see if we have a unique prefix.
      *
      * @param string $prefix  The current prefix.
@@ -219,19 +236,6 @@ class Mac
         return \current($prefixes);
     }
 
-    private function getSeparatorAsString(): string
-    {
-        switch($this->getSeparator()) {
-            default:
-            case self::SEPARATOR_COLON:
-                return ':';
-            case self::SEPARATOR_DASH:
-                return '-';
-            case self::SEPARATOR_NONE:
-                return '';
-        }
-    }
-
     /**
      * Inserts the chosen separator.
      *
@@ -241,7 +245,6 @@ class Mac
      */
     private function insertSeparator(string $macAddress): string
     {
-
         return implode($this->getSeparatorAsString(), str_split($macAddress, 2));
     }
 }

@@ -14,24 +14,24 @@ use Sikofitt\GenerateMac\Mac;
 
 $mac = new Mac(); // default is ':'
 // or
-$mac->setSeparator(':');
+$mac->setSeparator(Mac::SEPARATOR_COLON);
 $address = $mac->getAddress(); // ab:cd:ef:01:23:45
 
-$mac = new Mac('-');
+$mac = new Mac(Mac::SEPARATOR_DASH);
 // or
-$mac->setSeparator('-');
+$mac->setSeparator(Mac::SEPARATOR_DASH);
 $address = $mac->getAddress(); // ab-cd-ef-01-23-45
 
-$mac = new Mac('');
+$mac = new Mac(Mac::SEPARATOR_NONE);
 // or
-$mac->setSeparator('');
+$mac->setSeparator(Mac::SEPARATOR_NONE);
 $address = $mac->getAddress(); // abcdef012345
 ```
 
 If you don't care that it is unique you can remove the check for private mac prefixes.
 
 ```php
-$mac = new Mac(':', false);
+$mac = new Mac(Mac::SEPARATOR_COLON, false);
 // or
 $mac->setUnique(false);
 
