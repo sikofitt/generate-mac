@@ -50,9 +50,20 @@ class Mac
           'xaxxxx',
           'xaxxxx',
     ];
-    protected $isTest;
 
+    /**
+     * @var bool
+     */
+    protected $isTest = false;
+
+    /**
+     * @var string
+     */
     private $separator;
+
+    /**
+     * @var bool
+     */
     private $unique;
 
     /**
