@@ -1,0 +1,64 @@
+#!/usr/bin/env php
+<?php declare(strict_types=1);
+
+/*
+ * Copyright (c) 2018  https://sikofitt.com sikofitt@sikofitt.com
+ *
+ * This program is free software: you can redistribute it and/or modify
+ * it under the terms of the GNU General Public License as published by
+ * the Free Software Foundation, either version 3 of the License, or
+ * (at your option) any later version.
+ *
+ * This program is distributed in the hope that it will be useful,
+ * but WITHOUT ANY WARRANTY; without even the implied warranty of
+ * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+ * GNU General Public License for more details.
+ *
+ * You should have received a copy of the GNU General Public License
+ * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ */
+
+use Symfony\Component\Console\{
+    Application,
+    Command\Command
+};
+
+use Sikofitt\GenerateMac\Command\GenerateMacCommand;
+
+$autoloadFiles = array(
+  __DIR__ . '/../vendor/autoload.php',
+  __DIR__ . '/../../../autoload.php',
+);
+
+foreach ($autoloadFiles as $autoloadFile) {
+    if (file_exists($autoloadFile)) {
+        require $autoloadFile;
+        define('GENERATE_MAC', $autoloadFile);
+        break;
+    }
+}
+
+if (!defined('GENERATE_MAC')) {
+    die(
+      'You need to set up the project dependencies using the following commands:' . PHP_EOL .
+      'curl -s http://getcomposer.org/installer | php' . PHP_EOL .
+      'php composer.phar install' . PHP_EOL
+    );
+}
+
+if(false === class_exists(Command::class))
+{
+    throw new \RuntimeException('Install symfony/console to use the the generate-mac command.');
+}
+
+$application = new Application();
+$application->add(new GenerateMacCommand());
+$application->setDefaultCommand('generate-mac', true);
+$application->setAutoExit(true);
+
+try {
+    $application->run();
+} catch (Exception $e) {
+    printf('Couldn\'t run the application.%s', PHP_EOL);
+    printf('Error was: %s at %s:%s%s', $e->getMessage(), $e->getFile(), $e->getLine(), PHP_EOL);
+}
