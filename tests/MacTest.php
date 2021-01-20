@@ -36,10 +36,10 @@ class MacTest extends TestCase
         $this->assertCount(50, $macAddresses);
 
         foreach ($macAddresses as $address) {
-            $this->assertRegExp(self::REGEX, $address);
+            $this->assertMatchesRegularExpression(self::REGEX, $address);
         }
 
-        $this->assertRegExp(self::REGEX, $mac->getMacAddress());
+        $this->assertMatchesRegularExpression(self::REGEX, $mac->getMacAddress());
         $this->assertSame(Mac::SEPARATOR_COLON, $mac->getSeparator());
         $this->assertTrue($mac->getUnique());
     }
@@ -49,10 +49,10 @@ class MacTest extends TestCase
         $mac = new Mac(Mac::SEPARATOR_DASH);
 
         $this->assertSame(Mac::SEPARATOR_DASH, $mac->getSeparator());
-        $this->assertRegExp(self::REGEX, $mac->getMacAddress());
+        $this->assertMatchesRegularExpression(self::REGEX, $mac->getMacAddress());
         $mac->setSeparator(Mac::SEPARATOR_COLON);
         $this->assertSame(Mac::SEPARATOR_COLON, $mac->getSeparator());
-        $this->assertRegExp(self::REGEX, $mac->getMacAddress());
+        $this->assertMatchesRegularExpression(self::REGEX, $mac->getMacAddress());
         $this->assertNotFalse(strpos($mac->getMacAddress(), ':'));
     }
 

@@ -49,7 +49,7 @@ class GenerateMacCommandTest extends TestCase
     {
         $this->commandTester->execute([]);
         $display = $this->commandTester->getDisplay();
-        $this->assertContains('// Generated 1 mac addresses', $display);
+        $this->assertStringContainsString('// Generated 1 mac addresses', $display);
         $this->assertSame(0, $this->commandTester->getStatusCode());
         $this->expectException(\RuntimeException::class);
         $this->commandTester->execute(['--count' => -1]);
@@ -65,7 +65,7 @@ class GenerateMacCommandTest extends TestCase
     public function testPlain(): void
     {
         $this->commandTester->execute(['--output' => 'plain', '--count' => 1]);
-        $this->assertRegExp(self::REGEX, $this->commandTester->getDisplay());
+        $this->assertMatchesRegularExpression(self::REGEX, $this->commandTester->getDisplay());
         $this->assertSame(0, $this->commandTester->getStatusCode());
     }
 
