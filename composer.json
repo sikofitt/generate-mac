@@ -3,9 +3,10 @@
     "description": "Generates dummy mac addresses",
     "type": "library",
     "require": {
-      "php": "^7.2",
-      "ext-sodium": "*",
-      "ext-json": "*"
+        "php": ">=7.3",
+        "ext-json": "*",
+        "ext-sodium": "*",
+        "phpunit/phpunit": "^9.5"
     },
     "autoload": {
       "psr-4": {
@@ -14,7 +15,6 @@
     },
     "require-dev": {
         "symfony/console": "^4.1",
-        "phpunit/phpunit": "^7.4",
         "friendsofphp/php-cs-fixer": "^2.13",
         "squizlabs/php_codesniffer": "^3.3"
     },
