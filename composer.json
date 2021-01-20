@@ -5,8 +5,7 @@
     "require": {
         "php": ">=7.3",
         "ext-json": "*",
-        "ext-sodium": "*",
-        "phpunit/phpunit": "^9.5"
+        "ext-sodium": "*"
     },
     "autoload": {
       "psr-4": {
@@ -14,9 +13,10 @@
       }
     },
     "require-dev": {
-        "symfony/console": "^4.1",
         "friendsofphp/php-cs-fixer": "^2.13",
-        "squizlabs/php_codesniffer": "^3.3"
+        "phpunit/phpunit": "^9.5",
+        "squizlabs/php_codesniffer": "^3.3",
+        "symfony/console": "^4.1"
     },
     "autoload-dev": {
       "psr-4": {

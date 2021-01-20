@@ -196,6 +196,7 @@ class Mac
      */
     public function getSeparatorAsString(): string
     {
+
         switch ($this->getSeparator()) {
             default:
             case self::SEPARATOR_COLON:
