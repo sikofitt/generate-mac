@@ -25,23 +25,18 @@ test:7.3:
   
   image: php:7.3
   only:
-    branches:
-        - 0.x
+    - 0.x@sikofitt/generate-mac
   script:
     - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
 test:7.4:
   image: php:7.4
   only:
-    branches: 
-        - 0.x
+    - 0.x@sikofitt/generate-mac
   script:
     - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
 test:8.0:
   image: php:8.0
   only:
-    branches:
-      - 0.x
-      - 1.x 
-      - master
+    - branches
   script:
    - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
