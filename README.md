@@ -2,7 +2,13 @@
 
 ### Small library to generate unique private mac addresses
 
+[![pipeline status](https://repos.bgemi.net/sikofitt/generate-mac/badges/1.x/pipeline.svg)](https://repos.bgemi.net/sikofitt/generate-mac/-/commits/1.x)
+[![coverage report](https://repos.bgemi.net/sikofitt/generate-mac/badges/1.x/coverage.svg)](https://repos.bgemi.net/sikofitt/generate-mac/-/commits/1.x)
+
 #### Install
+
+Requires PHP v8.0,  For versions compatible with PHP >= 7.3 use the 0.x branch.
+
 [composer](https://getcomposer.org)
 ```bash
 composer require sikofitt/generate-mac
