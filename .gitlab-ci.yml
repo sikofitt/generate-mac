@@ -2,7 +2,8 @@
 cache:
   paths:
     - vendor/
-
+tags:
+  - default
 before_script:
   - apt-get update -yqq
   - apt-get install -yqq git unzip
