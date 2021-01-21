@@ -2,8 +2,7 @@
 cache:
   paths:
     - vendor/
-tags:
-  - default
+
 before_script:
   - apt-get update -yqq
   - apt-get install -yqq git unzip
@@ -23,19 +22,24 @@ variables:
 # Run our tests
 # If Xdebug was installed you can generate a coverage report and see code coverage metrics.
 test:7.3:
-  
+  tags:
+    - default  
   image: php:7.3
   only:
     - 0.x@sikofitt/generate-mac
   script:
     - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
 test:7.4:
+  tags:
+    - default
   image: php:7.4
   only:
     - 0.x@sikofitt/generate-mac
   script:
     - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
 test:8.0:
+  tags:
+    - default
   image: php:8.0
   only:
     - branches
