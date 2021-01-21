@@ -34,16 +34,20 @@ use Symfony\Component\Console\Style\SymfonyStyle;
 
 class GenerateMacCommand extends Command
 {
+    private const SEPARATOR_NAMES = [
+        'colon',
+        'dash',
+        'none',
+    ];
+
     public function configure(): void
     {
         $this
           ->setName('generate-mac')
           ->addOption('count', 'c', InputOption::VALUE_REQUIRED, 'Generate {count} mac addresses.')
-          ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Output in this format instead of a string. [json,plain,string]')
-          ->addOption('separator', 's', InputOption::VALUE_REQUIRED, 'The separator to use for mac addresses.')
+          ->addOption('output', 'o', InputOption::VALUE_REQUIRED, 'Output in this format instead of a string. [json, plain, string]')
+          ->addOption('separator', 's', InputOption::VALUE_REQUIRED, 'The separator to use for mac addresses. [colon, dash, none]')
         ;
-
-        parent::configure();
     }
 
     /**
@@ -61,9 +65,9 @@ class GenerateMacCommand extends Command
             throw new RuntimeException('$count should be a positive number greater than zero.');
         }
 
-        $separator = strtolower($input->getOption('separator') ?? 'colon');
+        $separatorName = strtolower($input->getOption('separator') ?? 'colon');
 
-        if (!\in_array($separator, ['colon','none','dash'], true)) {
+        if (!\in_array($separatorName, self::SEPARATOR_NAMES, true)) {
             throw new InvalidArgumentException('Separator must be one of "colon", "none", or "dash"');
         }
 
@@ -71,22 +75,20 @@ class GenerateMacCommand extends Command
 
         $io = new SymfonyStyle($input, $output);
 
-        switch ($separator) {
-            case 'colon':
-            default:
-                $separator = Mac::SEPARATOR_COLON;
-                break;
-            case 'none':
-                $separator = Mac::SEPARATOR_NONE;
-                break;
-            case 'dash':
-                $separator = Mac::SEPARATOR_DASH;
-                break;
-        }
+        $separator = match($separatorName) {
+            'colon' => Mac::SEPARATOR_COLON,
+            'dash' => Mac::SEPARATOR_DASH,
+            'none' => Mac::SEPARATOR_NONE,
+            default => Mac::SEPARATOR_COLON,
+        };
 
         $mac = new Mac($separator);
 
         $macAddresses = $mac->getMacAddresses($count);
+
+        if(empty($macAddresses)) {
+            return Command::FAILURE;
+        }
 
         switch ($outputFormat) {
             case 'string':
@@ -102,6 +104,6 @@ class GenerateMacCommand extends Command
                 break;
         }
 
-        return 0;
+        return Command::SUCCESS;
     }
 }

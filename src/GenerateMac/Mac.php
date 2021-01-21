@@ -24,6 +24,7 @@ class Mac
     public const SEPARATOR_COLON = 0;
     public const SEPARATOR_DASH = 1;
     public const SEPARATOR_NONE = 2;
+
     /**
      * Private mac address prefixes that are used
      * internally or with virtual machines and containers.
@@ -68,22 +69,10 @@ class Mac
     protected $isTest = false;
 
     /**
-     * @var int  The mac address separator, can be self::SEPARATOR_*
-     */
-    private $separator;
-
-    /**
-     * @var bool  If we care if we get an already used prefix or not.
-     */
-    private $unique;
-
-    /**
-     * Mac constructor.
-     *
      * @param int $separator  The mac address separator, one of self::SEPARATOR_*
      * @param bool $unique  Whether or not we care if we get a non unique prefix.
      */
-    public function __construct(int $separator = self::SEPARATOR_COLON, bool $unique = true)
+    public function __construct(private int $separator = self::SEPARATOR_COLON, private bool $unique = true)
     {
         $this->setUnique($unique);
         $this->setSeparator($separator);
@@ -196,16 +185,12 @@ class Mac
      */
     public function getSeparatorAsString(): string
     {
-
-        switch ($this->getSeparator()) {
-            default:
-            case self::SEPARATOR_COLON:
-                return ':';
-            case self::SEPARATOR_DASH:
-                return '-';
-            case self::SEPARATOR_NONE:
-                return '';
-        }
+        return match ( $this->getSeparator() ) {
+                self::SEPARATOR_COLON => ':',
+                self::SEPARATOR_DASH => '-',
+                self::SEPARATOR_NONE => '',
+                default => ':',
+            };
     }
 
     /**
@@ -230,11 +215,11 @@ class Mac
      */
     private function generateString(string $template): string
     {
-        $bytes = sodium_bin2hex(\random_bytes(32));
+        $bytes = \sodium_bin2hex(\random_bytes(32));
 
         while (false !== $pos = \strpos($template, 'x')) {
             $replacement = $bytes[\random_int(0, \strlen($bytes) -1)];
-            $template = substr_replace($template, $replacement, $pos, 1);
+            $template = \substr_replace($template, $replacement, $pos, 1);
         }
 
         return $template;
@@ -259,6 +244,6 @@ class Mac
      */
     private function insertSeparator(string $macAddress): string
     {
-        return implode($this->getSeparatorAsString(), str_split($macAddress, 2));
+        return \implode($this->getSeparatorAsString(), \str_split($macAddress, 2));
     }
 }
