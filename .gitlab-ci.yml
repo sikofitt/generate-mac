@@ -1,0 +1,44 @@
+
+# Select what we should cache between builds
+cache:
+  paths:
+    - vendor/
+
+before_script:
+  - apt-get update -yqq
+  - apt-get install -yqq git unzip
+  # Install PHP extensions
+  # Install & enable Xdebug for code coverage reports
+  - pecl install xdebug
+  - docker-php-ext-enable xdebug
+  # Install and run Composer
+  - curl -sS https://getcomposer.org/installer | php
+  - php composer.phar install
+
+
+# Set any variables we need
+variables:
+  XDEBUG_MODE: coverage
+
+# Run our tests
+# If Xdebug was installed you can generate a coverage report and see code coverage metrics.
+test:7.3
+    image: php:7.3
+    builds: 
+        - 0.x
+  script:
+    - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
+test:7.4
+    image: php:7.4
+    builds: 
+        - 0.x
+  script:
+    - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
+test:8.0
+    image: php:8.0
+    builds: 
+        - 0.x
+        - 1.x 
+        - master
+  script:
+    - vendor/bin/phpunit --configuration phpunit.xml.dist --coverage-text --colors=never
