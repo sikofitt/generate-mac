@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /*
- * Copyright (c) 2018  https://sikofitt.com sikofitt@sikofitt.com
+ * Copyright (c) 2018-2025  https://sikofitt.com sikofitt@sikofitt.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,15 +15,41 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 namespace Sikofitt\GenerateMac;
 
+use function bin2hex;
+use function current;
+use Exception;
+use function implode;
+
+use function in_array;
+
+use InvalidArgumentException;
+use Random\Engine\Xoshiro256StarStar;
+use Random\Randomizer;
+use function shuffle;
+use function str_split;
+use function strlen;
+use function strpos;
+use function substr_replace;
+use function trim;
+
 class Mac
 {
     public const SEPARATOR_COLON = 0;
+
     public const SEPARATOR_DASH = 1;
+
     public const SEPARATOR_NONE = 2;
+
+    private const  AVAILABLE_SEPARATORS = [
+        self::SEPARATOR_COLON,
+        self::SEPARATOR_DASH,
+        self::SEPARATOR_NONE,
+    ];
 
     /**
      * Private mac address prefixes that are used
@@ -66,11 +92,11 @@ class Mac
      * @internal
      * @var bool  For testing that we get a prefix that is not used.
      */
-    protected $isTest = false;
+    protected bool $isTest = false;
 
     /**
      * @param int $separator  The mac address separator, one of self::SEPARATOR_*
-     * @param bool $unique  Whether or not we care if we get a non unique prefix.
+     * @param bool $unique  Whether we care if we get a non-unique prefix.
      */
     public function __construct(private int $separator = self::SEPARATOR_COLON, private bool $unique = true)
     {
@@ -79,8 +105,7 @@ class Mac
     }
 
     /**
-     * @throws \Exception
-     * @return string
+     * @throws Exception
      */
     public function getMacAddress(): string
     {
@@ -102,7 +127,7 @@ class Mac
 
         $prefix .= $this->generateString('xxxxxx');
 
-        return \trim($this->insertSeparator($prefix));
+        return trim($this->insertSeparator($prefix));
     }
 
     /**
@@ -110,8 +135,7 @@ class Mac
      *
      * @param int $count  The number of mac addresses to generate.
      *
-     * @throws \Exception
-     * @return array
+     * @throws Exception
      */
     public function getMacAddresses(int $count): array
     {
@@ -124,11 +148,6 @@ class Mac
         return $macAddresses;
     }
 
-    /**
-     * @param bool $unique
-     *
-     * @return \Sikofitt\GenerateMac\Mac
-     */
     public function setUnique(bool $unique = true): Mac
     {
         $this->unique = $unique;
@@ -136,31 +155,19 @@ class Mac
         return $this;
     }
 
-    /**
-     * @return bool
-     */
     public function getUnique(): bool
     {
         return $this->unique;
     }
 
-    /**
-     * @param int $separator
-     *
-     * @return \Sikofitt\GenerateMac\Mac
-     */
     public function setSeparator(int $separator): Mac
     {
-        if (!\in_array(
+        if (!in_array(
             $separator,
-            [
-              self::SEPARATOR_COLON,
-              self::SEPARATOR_DASH,
-              self::SEPARATOR_NONE,
-            ],
+            self::AVAILABLE_SEPARATORS,
             true
         )) {
-            throw new \InvalidArgumentException(
+            throw new InvalidArgumentException(
                 'Separator is invalid.  Acceptable values: One of Mac::SEPARATOR_*'
             );
         }
@@ -170,9 +177,6 @@ class Mac
         return $this;
     }
 
-    /**
-     * @return int
-     */
     public function getSeparator(): int
     {
         return $this->separator;
@@ -180,29 +184,24 @@ class Mac
 
     /**
      * Helper to get the separator in string format
-     *
-     * @return string
      */
     public function getSeparatorAsString(): string
     {
-        return match ( $this->getSeparator() ) {
-                self::SEPARATOR_COLON => ':',
-                self::SEPARATOR_DASH => '-',
-                self::SEPARATOR_NONE => '',
-                default => ':',
-            };
+        return match ($this->getSeparator()) {
+            self::SEPARATOR_DASH => '-',
+            self::SEPARATOR_NONE => '',
+            default => ':', // self::SEPARATOR_COLON
+        };
     }
 
     /**
      * Test to see if we have a unique prefix.
      *
      * @param string $prefix  The current prefix.
-     *
-     * @return bool
      */
     private function isTaken(string $prefix): bool
     {
-        return \in_array($prefix, self::UNAVAILABLE_LOCAL_PREFIXES, true);
+        return in_array($prefix, self::UNAVAILABLE_LOCAL_PREFIXES, true);
     }
 
     /**
@@ -210,40 +209,35 @@ class Mac
      *
      * @param string $template  The template to use xexxxx.
      *
-     * @throws \Exception
-     * @return string
+     * @throws Exception
      */
     private function generateString(string $template): string
     {
-        $bytes = \sodium_bin2hex(\random_bytes(32));
+        $randomizer = new Randomizer(new Xoshiro256StarStar());
+        $bytes = bin2hex($randomizer->getBytes(32));
 
-        while (false !== $pos = \strpos($template, 'x')) {
-            $replacement = $bytes[\random_int(0, \strlen($bytes) -1)];
-            $template = \substr_replace($template, $replacement, $pos, 1);
+        while (false !== $pos = strpos($template, 'x')) {
+            $replacement = $bytes[$randomizer->getInt(0, (strlen($bytes) - 1))];
+            $template = substr_replace($template, $replacement, $pos, 1);
         }
 
         return $template;
     }
 
-    /**
-     * @return string
-     */
     private function shuffle(): string
     {
         $prefixes = self::AVAILABLE_PREFIXES;
-        \shuffle($prefixes);
-        return \current($prefixes);
+        shuffle($prefixes);
+        return current($prefixes);
     }
 
     /**
      * Inserts the chosen separator.
      *
-     * @param string $macAddress
      *
-     * @return string
      */
     private function insertSeparator(string $macAddress): string
     {
-        return \implode($this->getSeparatorAsString(), \str_split($macAddress, 2));
+        return implode($this->getSeparatorAsString(), str_split($macAddress, 2));
     }
 }
