@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /*
- * Copyright (c) 2018  https://sikofitt.com sikofitt@sikofitt.com
+ * Copyright (c) 2018-2025  https://sikofitt.com sikofitt@sikofitt.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,14 +15,16 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 namespace Sikofitt\GenerateMac\Tests;
 
+use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use Sikofitt\GenerateMac\Mac;
 
-class MacTest extends TestCase
+final class MacTest extends TestCase
 {
     private const REGEX = '/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/';
 
@@ -53,13 +55,13 @@ class MacTest extends TestCase
         $mac->setSeparator(Mac::SEPARATOR_COLON);
         $this->assertSame(Mac::SEPARATOR_COLON, $mac->getSeparator());
         $this->assertMatchesRegularExpression(self::REGEX, $mac->getMacAddress());
-        $this->assertNotFalse(strpos($mac->getMacAddress(), ':'));
+        $this->assertStringContainsString(':', $mac->getMacAddress());
     }
 
     public function testUnique(): void
     {
         $class = new class extends Mac {
-            protected $isTest = true;
+            protected bool $isTest = true;
         };
         $this->assertTrue($class->getUnique());
 
@@ -71,7 +73,7 @@ class MacTest extends TestCase
 
     public function testThrowsOnInvalidPrefix(): void
     {
-        $this->expectException(\InvalidArgumentException::class);
-        $mac = new Mac(4);
+        $this->expectException(InvalidArgumentException::class);
+        new Mac(4);
     }
 }

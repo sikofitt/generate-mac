@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /*
- * Copyright (c) 2018  https://sikofitt.com sikofitt@sikofitt.com
+ * Copyright (c) 2018-2025  https://sikofitt.com sikofitt@sikofitt.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,6 +15,7 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 namespace Sikofitt\GenerateMac\Tests;
@@ -25,14 +26,11 @@ use Symfony\Component\Console\Application;
 use Symfony\Component\Console\Exception\InvalidArgumentException;
 use Symfony\Component\Console\Tester\CommandTester;
 
-class GenerateMacCommandTest extends TestCase
+final class GenerateMacCommandTest extends TestCase
 {
     private const REGEX = '/^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$/';
 
-    /**
-     * @var CommandTester
-     */
-    private $commandTester;
+    private CommandTester $commandTester;
 
     public function setUp(): void
     {
@@ -79,7 +77,7 @@ class GenerateMacCommandTest extends TestCase
     {
         $this->commandTester->execute(['--separator' => 'colon', '--output' => 'plain']);
         $output = $this->commandTester->getDisplay();
-        $this->assertNotFalse(strpos($output, ':'));
+        $this->assertStringContainsString(':', $output);
         $this->commandTester->execute(['--separator' => 'none', '--output' => 'plain']);
 
         $output = $this->commandTester->getDisplay(true);
@@ -90,6 +88,6 @@ class GenerateMacCommandTest extends TestCase
 
         $this->commandTester->execute(['--separator' => 'dash', '--output' => 'plain']);
         $output = $this->commandTester->getDisplay();
-        $this->assertNotFalse(strpos($output, '-'));
+        $this->assertStringContainsString('-', $output);
     }
 }
