@@ -1,7 +1,7 @@
 <?php declare(strict_types=1);
 
 /*
- * Copyright (c) 2018  https://sikofitt.com sikofitt@sikofitt.com
+ * Copyright (c) 2018-2025  https://sikofitt.com sikofitt@sikofitt.com
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -15,20 +15,21 @@
  *
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
+ *
  */
 
 namespace Sikofitt\GenerateMac\Command;
 
+use Exception;
+use function in_array;
+use function json_encode;
 use Sikofitt\GenerateMac\Mac;
+use function strtolower;
 use Symfony\Component\Console\Command\Command;
-use Symfony\Component\Console\Exception\{
-    InvalidArgumentException,
-    RuntimeException
-};
-use Symfony\Component\Console\Input\{
-    InputInterface,
-    InputOption
-};
+use Symfony\Component\Console\Exception\InvalidArgumentException;
+use Symfony\Component\Console\Exception\RuntimeException;
+use Symfony\Component\Console\Input\InputInterface;
+use Symfony\Component\Console\Input\InputOption;
 use Symfony\Component\Console\Output\OutputInterface;
 use Symfony\Component\Console\Style\SymfonyStyle;
 
@@ -51,11 +52,8 @@ class GenerateMacCommand extends Command
     }
 
     /**
-     * @param \Symfony\Component\Console\Input\InputInterface $input
-     * @param \Symfony\Component\Console\Output\OutputInterface $output
      *
-     * @throws \Exception
-     * @return int
+     * @throws Exception
      */
     public function execute(InputInterface $input, OutputInterface $output): int
     {
@@ -67,7 +65,7 @@ class GenerateMacCommand extends Command
 
         $separatorName = strtolower($input->getOption('separator') ?? 'colon');
 
-        if (!\in_array($separatorName, self::SEPARATOR_NAMES, true)) {
+        if (!in_array($separatorName, self::SEPARATOR_NAMES, true)) {
             throw new InvalidArgumentException('Separator must be one of "colon", "none", or "dash"');
         }
 
@@ -76,7 +74,6 @@ class GenerateMacCommand extends Command
         $io = new SymfonyStyle($input, $output);
 
         $separator = match($separatorName) {
-            'colon' => Mac::SEPARATOR_COLON,
             'dash' => Mac::SEPARATOR_DASH,
             'none' => Mac::SEPARATOR_NONE,
             default => Mac::SEPARATOR_COLON,
@@ -86,7 +83,7 @@ class GenerateMacCommand extends Command
 
         $macAddresses = $mac->getMacAddresses($count);
 
-        if(empty($macAddresses)) {
+        if ($macAddresses === []) {
             return Command::FAILURE;
         }
 
@@ -97,10 +94,10 @@ class GenerateMacCommand extends Command
                 $io->comment(implode(PHP_EOL, $macAddresses));
                 break;
             case 'json':
-                $io->writeln(\json_encode($macAddresses, JSON_PRETTY_PRINT));
+                $io->writeln(json_encode($macAddresses, JSON_THROW_ON_ERROR | JSON_PRETTY_PRINT));
                 break;
             case 'plain':
-                $io->writeln($macAddresses, SymfonyStyle::OUTPUT_PLAIN | SymfonyStyle::VERBOSITY_NORMAL);
+                $io->writeln($macAddresses, OutputInterface::OUTPUT_PLAIN | OutputInterface::VERBOSITY_NORMAL);
                 break;
         }
 

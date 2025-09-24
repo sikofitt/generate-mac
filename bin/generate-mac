@@ -18,51 +18,23 @@
  * along with this program.  If not, see <http://www.gnu.org/licenses/>.
  */
 
-use Symfony\Component\Console\{
-    Application,
-    Command\Command
-};
-
 use Sikofitt\GenerateMac\Command\GenerateMacCommand;
+use Symfony\Component\Console\Application;
+use Symfony\Component\Console\Command\Command;
 
-define('GENERATE_MAC_VERSION', 'v0.0.1');
+const GENERATE_MAC_VERSION = 'v2.1.x';
 
-$autoloadFiles = array(
-  __DIR__ . '/../vendor/autoload.php',
-  __DIR__ . '/../../../autoload.php',
-);
+require __DIR__ . '/../vendor/autoload.php';
 
-foreach ($autoloadFiles as $autoloadFile) {
-    if (file_exists($autoloadFile)) {
-        require $autoloadFile;
-        define('GENERATE_MAC', $autoloadFile);
-        break;
-    }
-}
 
-if (!defined('GENERATE_MAC')) {
-
-    $msg =
-      PHP_EOL . 'You need to use composer to install the dependencies:' . PHP_EOL .
-      'curl -LSs https://getcomposer.org/installer|php' . PHP_EOL .
-      'php composer.phar install, or ' . PHP_EOL .
-      'php composer.phar install --no-dev && php composer.phar require symfony/console' . PHP_EOL . PHP_EOL
-    ;
-
-    print $msg;
-
-    throw new \RuntimeException('Missing dependencies', -1);
-}
-
-if(false === class_exists(Command::class))
-{
+if (false === class_exists(Command::class)) {
     $msg =
       PHP_EOL . 'You need to use composer to install the dependencies for the console:' . PHP_EOL .
       'php composer.phar require symfony/console' . PHP_EOL . PHP_EOL
     ;
     print $msg;
 
-    throw new \RuntimeException('Missing package symfony/console.', -1);
+    throw new RuntimeException('Missing package symfony/console.', -1);
 }
 
 $application = new Application('Generate mac', GENERATE_MAC_VERSION);
