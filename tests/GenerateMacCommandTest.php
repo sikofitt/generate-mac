@@ -35,7 +35,7 @@ final class GenerateMacCommandTest extends TestCase
     public function setUp(): void
     {
         $application = new Application();
-        $application->add(new GenerateMacCommand());
+        $application->addCommand(new GenerateMacCommand());
         $application->setDefaultCommand('generate-mac', true);
 
         $this->commandTester = new CommandTester(new GenerateMacCommand());

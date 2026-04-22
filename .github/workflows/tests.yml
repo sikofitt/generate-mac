@@ -2,7 +2,7 @@ name: Tests
 
 on:
   push:
-    branches: [ 2.1.x-dev ]
+    branches: [ 2.2.x ]
   pull_request:
 
 jobs:
@@ -11,7 +11,7 @@ jobs:
     runs-on: ubuntu-latest
     strategy:
       matrix:
-        php: ['8.2', '8.3', '8.4', '8.5']
+        php: ['8.4', '8.5', '8.6']
         
     steps:
     - uses: actions/checkout@v2
@@ -31,7 +31,7 @@ jobs:
       uses: shivammathur/setup-php@v2
       with:
         coverage: "none"
-        extensions: "json,sodium"
+        extensions: "json"
         php-version: "${{ matrix.php }}"
         
     - name: Install dependencies
